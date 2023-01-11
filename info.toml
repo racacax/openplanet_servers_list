@@ -1,0 +1,7 @@
+[script]
+dependencies = ["NadeoServices"]
+[meta]
+name = "Servers List"
+author = "racacax"
+category = "Race"
+version = "0.0.1"
