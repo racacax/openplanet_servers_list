@@ -1,3 +1,4 @@
+#if TMNEXT
 namespace Client {
 
     int8 clubRoomsLoaded = 0;
@@ -45,3 +46,4 @@ namespace Client {
     }
 
 }
+#endif

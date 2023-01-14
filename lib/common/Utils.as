@@ -1,8 +1,8 @@
 /*
     Method to join server
     #qjoin : join a server directly
-    #join : Show server details before connecting on dedicated servers. Same as #qjoin for Nadeo servers
-    #qspectate : Spectate server
+    #join : Show server details before connecting on dedicated servers
+    #qspectate : Spectate server directly
 */
 void JoinServer(const string &in login) {
     cast<CTrackMania>(GetApp()).ManiaPlanetScriptAPI.OpenLink("maniaplanet://" + login, CGameManiaPlanetScriptAPI::ELinkType::ManialinkBrowser);

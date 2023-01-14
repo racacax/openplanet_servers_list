@@ -1,26 +1,23 @@
-array<string> events = {};
-
-void AddEvent(const string &in a) {
-	events.InsertAt(0, a);
-}
-
+#if TMNEXT
 void GetClubRooms() {
     if(Permissions::PlayPublicClubRoom()) { // only allow on Starter and Club
         clientInUse = true;
         int perPage = serversPerPage;
         int offset = serversPerPage * page;
-        if(displaySpecialRooms) {
-            if(page == 0) {
-                perPage-=3;
-            } else {
-                offset-=3;
-            }
+        int8 serversToSubstract = 0;
+        if(displayArcadeRoom) serversToSubstract += 1;
+        if(displayCampaignRoom) serversToSubstract += 1;
+        if(displayTotdRoom) serversToSubstract += 1;
+        if(page == 0) {
+            perPage-=serversToSubstract;
+        } else {
+            offset-=serversToSubstract;
         } 
         clubRooms = Client::GetClubRooms(searchString, offset, perPage);
         clientInUse = false;
         if(clubRooms.GetType() != Json::Type::Array && clubRooms.HasKey("clubRoomList")) {
             Client::clubRoomsLoaded = 1;
-            maxPage = int(float(clubRooms["itemCount"]) / serversPerPage);
+            maxPage = int((float(clubRooms["itemCount"]) + serversToSubstract) / serversPerPage);
         } else {
             Client::clubRoomsLoaded = -1;
             Log::Error("Error while fetching club rooms.");
@@ -81,10 +78,10 @@ void GetAllRooms() {
     totdRoom = Json::Object();
     campaignRoom = Json::Object();
     arcadeRoom = Json::Object();
-    if(page == 0 && displaySpecialRooms) {
-        GetTotdRoom();
-        GetCampaignRoom();
-        GetArcadeRoom();
+    if(page == 0) {
+        if(displayTotdRoom) GetTotdRoom();
+        if(displayCampaignRoom) GetCampaignRoom();
+        if(displayArcadeRoom) GetArcadeRoom();
     }
     GetClubRooms();
 }
@@ -125,25 +122,13 @@ void JoinRoom(string &in mode) {
     }
 }
 
-void HandleEvents() {
-    for(int n = events.Length -1; n >= 0; n-- ) {
-        auto event = events[n];
-        events.RemoveAt(n);
-		if(event == "getAllRooms") {
-            GetAllRooms();
-        } else if(event == "getTotdRoom") {
-            GetTotdRoom();
-        } else if(event == "getCampaignRoom") {
-            GetCampaignRoom();
-        } else if(event == "getClubRooms") {
-            GetClubRooms();
-        } else if(event == "qjoinRoom") {
-            JoinRoom("qjoin");
-        } else if(event == "joinRoom") {
-            JoinRoom("join");
-        } else if(event == "qspectateRoom") {
-            JoinRoom("qspectate");
-        }
+void HandleGameSpecificEvent(const string &in event) {
+    if(event == "getTotdRoom") {
+        GetTotdRoom();
+    } else if(event == "getCampaignRoom") {
+        GetCampaignRoom();
+    } else if(event == "getClubRooms") {
+        GetClubRooms();
     }
-    sleep(100);
 }
+#endif

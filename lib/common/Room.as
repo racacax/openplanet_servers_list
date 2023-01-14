@@ -10,6 +10,8 @@ class Room {
     bool isNadeo;
     bool hasPassword;
     string type;
+    string titlepack;
+    string login;
 
     Room() {}
     Room(const Json::Value &in id, const Json::Value &in clubId,const Json::Value &in clubName, const Json::Value &in name, const Json::Value &in playerCount, const Json::Value &in maxPlayers, const Json::Value &in region, const Json::Value &in gameMode, const Json::Value &in isNadeo, const Json::Value &in hasPassword) {
@@ -44,6 +46,17 @@ class Room {
         if(this.maxPlayers == -1)
             return "-";
         return tostring(this.maxPlayers);
+    }
+
+}
+
+class ManiaPlanetRoom: Room {
+    ManiaPlanetRoom() {}
+    ManiaPlanetRoom(const Json::Value &in id, const Json::Value &in name, const Json::Value &in playerCount, const Json::Value &in maxPlayers, const Json::Value &in region, const Json::Value &in gameMode, const Json::Value &in login, const Json::Value &in titlepack, const Json::Value &in hasPassword) {
+        super(id, 0, "", name, playerCount, maxPlayers, region, gameMode, Json::Value(false), hasPassword);
+        this.type = "ManiaPlanetRoom";
+        this.login = login;
+        this.titlepack = titlepack;
     }
 
 }

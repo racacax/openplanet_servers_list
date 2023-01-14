@@ -1,3 +1,4 @@
+#if TMNEXT
 Json::Value DeclareRequest(const Net::HttpMethod method, const string &in url, const string &in body = "") {
 	Net::HttpRequest@ req = NadeoServices::Request("NadeoLiveServices");
 	req.Url = url;
@@ -21,3 +22,4 @@ Json::Value Post(const string &in url, const string &in body = "") {
 Json::Value Get(const string &in url) {
 	return DeclareRequest(Net::HttpMethod::Get, url);
 }
+#endif
