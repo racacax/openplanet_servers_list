@@ -2,7 +2,8 @@
 namespace Client {
 
     int8 clubRoomsLoaded = 0;
-    Json::Value GetClubRooms(const string &in name = "", const int &in offset = 0, const int &in perPage = serversPerPage) {
+    Json::Value GetClubRooms(string &in name = "", const int &in offset = 0, const int &in perPage = serversPerPage) {
+        if(name == "") name = "_";
         return Get(BASE_URL + "club/room?offset=" + tostring(offset) + "&length=" + tostring(perPage) + "&name=" + Net::UrlEncode(name));
     }
 
