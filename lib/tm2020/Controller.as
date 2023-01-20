@@ -86,40 +86,45 @@ void GetAllRooms() {
     GetClubRooms();
 }
 
-void JoinRoom(string &in mode) {
+void JoinRoom(string &in mode, bool firstLoop = true) {
     clientInUse = true;
     auto result = Json::Array();
     auto roomCopy = currentRoom;
-    if(currentRoom.type == "ClubRoom") {
-        if(currentRoom.isNadeo && currentRoom.hasPassword) {
-            Client::GetClubRoomPassword(currentRoom.clubId, currentRoom.id);
-        }
-        result = Client::GetClubRoomJoinLink(currentRoom.clubId, currentRoom.id);
-    } else if(currentRoom.type == "TotdRoom") {
-        result = Client::GetTotdRoomJoinLink();
-    } else if(currentRoom.type == "CampaignRoom") {
-        result = Client::GetCampaignRoomJoinLink();
-    } else if(currentRoom.type == "ArcadeRoom") {
-        result = Client::GetArcadeRoomJoinLink();
-    }
-    if(roomCopy.id == currentRoom.id) { // In case user clicked another button
-        if(result.GetType() != Json::Type::Array && result.HasKey("joinLink")) {
-            if(result.HasKey("starting") && bool(result["starting"])) {
-                sleep(2000);
-                JoinRoom(mode);
-            } else {
-                clientInUse = false;
-                string joinLink = string(result["joinLink"]).Replace("#qjoin", "#join").Replace("#join", "#" + mode);
-                if(currentRoom.isNadeo) {
-                    joinLink += "@Trackmania";
-                }
-                JoinServer(joinLink);
+    if(currentRoom.login != "") {
+        JoinServer("#"+ mode + "=" + currentRoom.login + "@Trackmania");
+        clientInUse = false;
+    } else {
+        if(currentRoom.type == "ClubRoom") {
+            if(currentRoom.isNadeo && currentRoom.hasPassword && firstLoop) { // No need to call it more than once
+                Client::GetClubRoomPassword(currentRoom.clubId, currentRoom.id);
             }
-        } else {
-            Log::Error("Error while getting join link.");
-            clientInUse = false;
+            result = Client::GetClubRoomJoinLink(currentRoom.clubId, currentRoom.id);
+        } else if(currentRoom.type == "TotdRoom") {
+            result = Client::GetTotdRoomJoinLink();
+        } else if(currentRoom.type == "CampaignRoom") {
+            result = Client::GetCampaignRoomJoinLink();
+        } else if(currentRoom.type == "ArcadeRoom") {
+            result = Client::GetArcadeRoomJoinLink();
         }
-    }
+        if(roomCopy.id == currentRoom.id) { // In case user clicked another button
+            if(result.GetType() != Json::Type::Array && result.HasKey("joinLink")) {
+                if(result.HasKey("starting") && bool(result["starting"])) {
+                    sleep(2000);
+                    JoinRoom(mode, false);
+                } else {
+                    clientInUse = false;
+                    string joinLink = string(result["joinLink"]).Replace("#qjoin", "#join").Replace("#join", "#" + mode);
+                    if(currentRoom.isNadeo) {
+                        joinLink += "@Trackmania";
+                    }
+                    JoinServer(joinLink);
+                }
+            } else {
+                Log::Error("Error while getting join link.");
+                clientInUse = false;
+            }
+        }
+    }  
 }
 
 void HandleGameSpecificEvent(const string &in event) {

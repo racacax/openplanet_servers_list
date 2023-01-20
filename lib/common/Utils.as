@@ -12,24 +12,20 @@ Json::Value GetNullJsonValue() {
     return Json::Parse('{"key":null}')["key"];
 }
 
-/*
-TODO : Would be better to convert Account Id to login directly from there instead of doing an API request
-string ASCII_TABLE = Json::FromFile("assets/ascii.json");
 // Based on Beu's code from OpenPlanet Discord
-string getLoginFromAccountID(string accountId) {
+// Thanks to Phlarx for the help
+string GetLoginFromAccountId(string &in accountId) {
     accountId = accountId.Replace("-", "");
     string login = "";
-    for(uint i=0; i< accountId.Length; i+=2) {
+    for(int i=0; i< accountId.Length; i+=2) {
         string pair = accountId.SubStr(i, 2);
         vec4 hexVal = Text::ParseHexColor("#" + pair + "0000");
-        int intVal = 0xFF * hexVal.x;
-        //Log::Trace(tostring(intVal));
-        login += ASCII_TABLE[tostring(intVal)];
+        int intVal = int(0xFF * hexVal.x);
+        login += " ";
+        login[login.Length - 1] = intVal;
     }
     auto buffer = MemoryBuffer();
     buffer.Write(login);
     buffer.Seek(0);
-    //IO::SetClipboard(buffer.ReadToBase64(buffer.GetSize()));
-    return buffer.ReadToBase64(buffer.GetSize()).Replace("+", "-").Replace("");
+    return buffer.ReadToBase64(buffer.GetSize()).Replace("+", "-").Replace("/", "_").Replace("=", "");
 }
-*/

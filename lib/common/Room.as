@@ -14,7 +14,7 @@ class Room {
     string login;
 
     Room() {}
-    Room(const Json::Value &in id, const Json::Value &in clubId,const Json::Value &in clubName, const Json::Value &in name, const Json::Value &in playerCount, const Json::Value &in maxPlayers, const Json::Value &in region, const Json::Value &in gameMode, const Json::Value &in isNadeo, const Json::Value &in hasPassword) {
+    Room(const Json::Value &in id, const Json::Value &in clubId,const Json::Value &in clubName, const Json::Value &in name, const Json::Value &in playerCount, const Json::Value &in maxPlayers, const Json::Value &in region, const Json::Value &in gameMode, const Json::Value &in isNadeo, const Json::Value &in hasPassword, const string &in login = "") {
         this.id = id;
         this.clubId = clubId;
         this.clubName = clubName;
@@ -22,6 +22,7 @@ class Room {
         this.hasPassword = hasPassword;
         this.name = name;
         this.playerCount = playerCount;
+        this.login = login;
         if(maxPlayers.GetType() != Json::Type::Null) {
             this.maxPlayers = maxPlayers;
         } else {

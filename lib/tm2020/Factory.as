@@ -1,6 +1,10 @@
 #if TMNEXT
 Room CreateClubRoomFromJson(Json::Value room) {
-    return Room(room["id"], room["clubId"], room["clubName"], room["name"], room["room"]["playerCount"], room["room"]["maxPlayers"], room["room"]["region"], room["room"]["script"], room["nadeo"], room["password"]);
+    string login = "";
+    if(!bool(room["nadeo"]) && room["room"]["serverAccountId"] != "") {
+        login = GetLoginFromAccountId(string(room["room"]["serverAccountId"]));
+    }
+    return Room(room["id"], room["clubId"], room["clubName"], room["name"], room["room"]["playerCount"], room["room"]["maxPlayers"], room["room"]["region"], room["room"]["script"], room["nadeo"], room["password"], login);
 }
 
 Room CreateTotdRoomFromJson(Json::Value room) {
