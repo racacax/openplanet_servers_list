@@ -20,7 +20,7 @@ string GetLoginFromAccountId(string &in accountId) {
     for(int i=0; i< accountId.Length; i+=2) {
         string pair = accountId.SubStr(i, 2);
         vec4 hexVal = Text::ParseHexColor("#" + pair + "0000");
-        int intVal = int(0xFF * hexVal.x);
+        int intVal = int(Math::Round(0xFF * hexVal.x));
         login += " ";
         login[login.Length - 1] = intVal;
     }
