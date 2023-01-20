@@ -5,13 +5,15 @@ void GetClubRooms() {
         int perPage = serversPerPage;
         int offset = serversPerPage * page;
         int8 serversToSubstract = 0;
-        if(displayArcadeRoom) serversToSubstract += 1;
-        if(displayCampaignRoom) serversToSubstract += 1;
-        if(displayTotdRoom) serversToSubstract += 1;
-        if(page == 0) {
-            perPage-=serversToSubstract;
-        } else {
-            offset-=serversToSubstract;
+        if(searchString == "") {
+            if(displayArcadeRoom) serversToSubstract += 1;
+            if(displayCampaignRoom) serversToSubstract += 1;
+            if(displayTotdRoom) serversToSubstract += 1;
+            if(page == 0) {
+                perPage-=serversToSubstract;
+            } else {
+                offset-=serversToSubstract;
+            }
         } 
         clubRooms = Client::GetClubRooms(searchString, offset, perPage);
         clientInUse = false;
@@ -78,7 +80,7 @@ void GetAllRooms() {
     totdRoom = Json::Object();
     campaignRoom = Json::Object();
     arcadeRoom = Json::Object();
-    if(page == 0) {
+    if(page == 0 && searchString == "") {
         if(displayTotdRoom) GetTotdRoom();
         if(displayCampaignRoom) GetCampaignRoom();
         if(displayArcadeRoom) GetArcadeRoom();
