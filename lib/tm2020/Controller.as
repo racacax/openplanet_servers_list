@@ -15,11 +15,15 @@ void GetClubRooms() {
                 offset-=serversToSubstract;
             }
         } 
-        clubRooms = Client::GetClubRooms(searchString, offset, perPage);
+        auto clubRooms = Client::GetClubRooms(searchString, offset, perPage);
         clientInUse = false;
         if(clubRooms.GetType() != Json::Type::Array && clubRooms.HasKey("clubRoomList")) {
             Client::clubRoomsLoaded = 1;
             maxPage = int((float(clubRooms["itemCount"]) + serversToSubstract) / serversPerPage);
+            for(uint i=0; i< clubRooms["clubRoomList"].Length; i++) {
+                Room room = CreateClubRoomFromJson(clubRooms["clubRoomList"][i]);
+                servers.InsertLast(room);
+            }
         } else {
             Client::clubRoomsLoaded = -1;
             Log::Error("Error while fetching club rooms.");
@@ -30,10 +34,12 @@ void GetClubRooms() {
 void GetTotdRoom() {
     if(Permissions::PlayTOTDChannel()) { // only allow on Starter and Club (also Starter on Free COTD ?)
         clientInUse = true;
-        totdRoom = Client::GetTotdRoom();
+        auto totdRoom = Client::GetTotdRoom();
         clientInUse = false;
         if(totdRoom.GetType() != Json::Type::Array && totdRoom.HasKey("uid")) {
             Client::totdRoomLoaded = 1;
+            Room totdRoomInstance = CreateTotdRoomFromJson(totdRoom);
+            servers.InsertLast(totdRoomInstance);
         } else {
             Client::totdRoomLoaded = -1;
             Log::Error("Error while fetching TOTD room.");
@@ -44,10 +50,12 @@ void GetTotdRoom() {
 void GetCampaignRoom() {
     if(Permissions::PlayCurrentOfficialMonthlyCampaign()) { // technically everyone ?
         clientInUse = true;
-        campaignRoom = Client::GetCampaignRoom();
+        auto campaignRoom = Client::GetCampaignRoom();
         clientInUse = false;
         if(campaignRoom.GetType() != Json::Type::Array && campaignRoom.HasKey("uid")) {
             Client::campaignRoomLoaded = 1;
+            Room campaignRoomInstance = CreateCampaignRoomFromJson(campaignRoom);
+            servers.InsertLast(campaignRoomInstance);
         } else {
             Client::campaignRoomLoaded = -1;
             Log::Error("Error while fetching Campaign room.");
@@ -60,10 +68,12 @@ void GetCampaignRoom() {
 void GetArcadeRoom() {
     if(Permissions::PlayArcadeChannel()) { // technically everyone ?
         clientInUse = true;
-        arcadeRoom = Client::GetArcadeRoom();
+        auto arcadeRoom = Client::GetArcadeRoom();
         clientInUse = false;
-        if(campaignRoom.GetType() != Json::Type::Array && campaignRoom.HasKey("uid")) {
+        if(arcadeRoom.GetType() != Json::Type::Array && arcadeRoom.HasKey("uid")) {
             Client::arcadeRoomLoaded = 1;
+            Room arcadeRoomInstance = CreateArcadeRoomFromJson(arcadeRoom);
+            servers.InsertLast(arcadeRoomInstance);
         } else {
             Client::arcadeRoomLoaded = -1;
             Log::Error("Error while fetching Arcade room.");
@@ -76,10 +86,7 @@ void GetAllRooms() {
     Client::totdRoomLoaded = 0;
     Client::campaignRoomLoaded = 0;
     Client::arcadeRoomLoaded = 0;
-    clubRooms = Json::Array();
-    totdRoom = Json::Object();
-    campaignRoom = Json::Object();
-    arcadeRoom = Json::Object();
+    servers = {};
     if(page == 0 && searchString == "") {
         if(displayTotdRoom) GetTotdRoom();
         if(displayCampaignRoom) GetCampaignRoom();

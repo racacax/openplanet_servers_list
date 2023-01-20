@@ -6,8 +6,6 @@ string VALLEY = "Valley";
 string CANYON = "Canyon";
 string LAGOON = "Lagoon";
 
-Json::Value servers = Json::Array();
-
 void RunGameSpecificMain() {
 	while(cast<CTrackMania>(GetApp()).ManiaPlanetScriptAPI.Authentication_Token == "") {
         yield();
@@ -47,13 +45,5 @@ void RenderGameSpecificHeader() {
         AddEvent("getAllRooms");
     }
     UI::EndTable();
-}
-void RenderGameSpecificUI() {
-    if(Client::serversLoaded == 1) {
-        for(uint i=0; i< servers.Length; i++) {
-            Room room = CreateManiaPlanetRoomFromJson(servers[i], i);
-            RenderRoom(room, i);
-        }
-    }
 }
 #endif

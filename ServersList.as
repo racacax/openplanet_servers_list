@@ -9,6 +9,7 @@ int maxPage = 0;
 Room@ currentRoom = null;
 bool clientInUse = false;
 bool inputFocused = false;
+array<Room> servers = {};
 
 void Main()
 {
@@ -122,7 +123,9 @@ void Render() {
 				UI::TableNextColumn();
 			}
 			UI::Text("Actions");
-			RenderGameSpecificUI();
+			for(uint i=0; i< servers.Length; i++) {
+				RenderRoom(servers[i], i);
+			}
 			UI::EndTable();
 		}
 		UI::End();
