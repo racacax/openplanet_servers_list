@@ -8,7 +8,7 @@ Json::Value DeclareRequest(const Net::HttpMethod method, const string &in url, c
 	req.Headers.Set("Content-Type", "application/json");
 	req.Headers.Set("Maniaplanet-Auth", 'Login="'+ GetLocalLogin() +'", Token="' + app.ManiaPlanetScriptAPI.Authentication_Token + '"');
 	req.Body = body;
-	Log::Trace("Body: " + body);
+	// Log::Trace("Body: " + body);
 	req.Start();
 	while (!req.Finished()) {
 		yield();

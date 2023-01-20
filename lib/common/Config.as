@@ -8,6 +8,6 @@ bool automaticallyDisplay = false;
 [Setting category="Main" name="Display region"]
 bool displayRegion = false;
 [Setting category="Main" name="Servers per page" min=5 max=50]
-int serversPerPage = 15;
+uint serversPerPage = 15;
 [Setting hidden]
 bool firstStart = true;
