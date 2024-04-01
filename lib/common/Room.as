@@ -51,6 +51,15 @@ class Room {
 
 }
 
+class ReviewRoom: Room {
+    ReviewRoom() {}
+    ReviewRoom(const Json::Value &in id, const Json::Value &in clubId,const Json::Value &in clubName, const Json::Value &in name, const Json::Value &in maxPlayers) {
+        super(id, clubId, clubName, name, -1, maxPlayers, "unknown", "Map Review", Json::Value(true), Json::Value(false));
+        this.type = "ReviewRoom";
+    }
+
+}
+
 class ManiaPlanetRoom: Room {
     ManiaPlanetRoom() {}
     ManiaPlanetRoom(const Json::Value &in id, const Json::Value &in name, const Json::Value &in playerCount, const Json::Value &in maxPlayers, const Json::Value &in region, const Json::Value &in gameMode, const Json::Value &in login, const Json::Value &in titlepack, const Json::Value &in hasPassword) {

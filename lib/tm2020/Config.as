@@ -11,4 +11,6 @@ bool displayArcadeRoom = true;
 bool displayCampaignRoom = true;
 [Setting category="Main" name="Display Club name"]
 bool displayClubName = true;
+[Setting hidden]
+string roomType = "club";
 #endif

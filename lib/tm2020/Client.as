@@ -23,8 +23,29 @@ namespace Client {
         return Get(BASE_URL + "channel/officialhard");
     }
 
+    
+    int8 reviewRoomsLoaded = 0;
+    Json::Value GetReviewRooms(string &in name = "", const int &in offset = 0, const int &in perPage = serversPerPage) {
+        if(name == "") name = "_";
+        return Get(BASE_URL + "club/map-review?offset=" + tostring(offset) + "&length=" + tostring(perPage) + "&name=" + Net::UrlEncode(name));
+    }
+
     Json::Value GetClubRoomJoinLink(int clubId, int id) {
         return Post(BASE_URL + "club/" + tostring(clubId) + "/room/" + tostring(id) + "/join");
+    }
+
+
+    Json::Value GetReviewRoomJoinLink(int clubId, int id) {
+        return Post(BASE_URL + "club/" + tostring(clubId) + "/map-review/" + tostring(id) + "/join");
+    }
+
+
+    Json::Value GetTotdReviewJoinLink() {
+        return Get(BASE_URL + "map-review/totd/connect");
+    }
+
+    Json::Value GetRoyalReviewJoinLink() {
+        return Get(BASE_URL + "map-review/royal/connect");
     }
 
     /*
