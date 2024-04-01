@@ -5,6 +5,7 @@ string STADIUM = "Stadium";
 string VALLEY = "Valley";
 string CANYON = "Canyon";
 string LAGOON = "Lagoon";
+uint nbColumnsHeader = 1;
 
 void RunGameSpecificMain() {
 	while(cast<CTrackMania>(GetApp()).ManiaPlanetScriptAPI.Authentication_Token == "") {
@@ -12,6 +13,8 @@ void RunGameSpecificMain() {
     }
 }
 void RenderGameSpecificHeader() {
+	UI::TableNextRow();
+	UI::TableNextColumn();
     UI::BeginTable("titlesTable", 5, UI::TableFlags::SizingFixedFit);
 	UI::TableNextRow();
 	UI::TableNextColumn();

@@ -1,6 +1,6 @@
 #if TMNEXT
 void GetClubRooms() {
-    if(Permissions::PlayPublicClubRoom()) { // only allow on Starter and Club
+    if(Permissions::PlayPublicClubRoom()) { // only allow on Standard and Club
         clientInUse = true;
         int perPage = serversPerPage;
         int offset = serversPerPage * page;
@@ -32,7 +32,7 @@ void GetClubRooms() {
 }
 
 void GetTotdRoom() {
-    if(Permissions::PlayTOTDChannel()) { // only allow on Starter and Club (also Starter on Free COTD ?)
+    if(Permissions::PlayTOTDChannel()) { // only allow on Standard and Club (also Starter on Free COTD ?)
         clientInUse = true;
         auto totdRoom = Client::GetTotdRoom();
         clientInUse = false;
@@ -81,18 +81,55 @@ void GetArcadeRoom() {
     }
 }
 
+void GetReviewRooms() {
+    if(Permissions::PlayPrivateActivity()) { // only allow Club
+        clientInUse = true;
+        int perPage = serversPerPage;
+        int offset = serversPerPage * page;
+        
+        int8 serversToSubstract = 0;
+        if(searchString == "") {
+            if(page == 0) {
+                perPage-=2;
+                servers.InsertLast(CreateTotdReviewRoom());
+                servers.InsertLast(CreateRoyalReviewRoom());
+            } else {
+                offset-=2;
+            }
+        } 
+        auto reviewRooms = Client::GetReviewRooms(searchString, offset, perPage);
+        clientInUse = false;
+        if(reviewRooms.GetType() != Json::Type::Array && reviewRooms.HasKey("clubMapReviewList")) {
+            Client::reviewRoomsLoaded = 1;
+            maxPage = int((float(reviewRooms["itemCount"]) + serversToSubstract) / serversPerPage);
+            for(uint i=0; i< reviewRooms["clubMapReviewList"].Length; i++) {
+                Room room = CreateReviewRoomFromJson(reviewRooms["clubMapReviewList"][i]);
+                servers.InsertLast(room);
+            }
+        } else {
+            Client::reviewRoomsLoaded = -1;
+            Log::Error("Error while fetching review rooms.");
+        }
+    }
+}
+
 void GetAllRooms() {
     Client::clubRoomsLoaded = 0;
     Client::totdRoomLoaded = 0;
     Client::campaignRoomLoaded = 0;
     Client::arcadeRoomLoaded = 0;
+    Client::reviewRoomsLoaded = 0;
     servers = {};
-    if(page == 0 && searchString == "") {
-        if(displayTotdRoom) GetTotdRoom();
-        if(displayCampaignRoom) GetCampaignRoom();
-        if(displayArcadeRoom) GetArcadeRoom();
+    if(roomType == "club") {
+        if(page == 0 && searchString == "") {
+            if(displayTotdRoom) GetTotdRoom();
+            if(displayCampaignRoom) GetCampaignRoom();
+            if(displayArcadeRoom) GetArcadeRoom();
+        }
+        GetClubRooms();
+    } else {
+        GetReviewRooms();
     }
-    GetClubRooms();
 }
 
 void JoinRoom(string &in mode, bool firstLoop = true) {
@@ -103,7 +140,15 @@ void JoinRoom(string &in mode, bool firstLoop = true) {
         JoinServer("#"+ mode + "=" + currentRoom.login + "@Trackmania");
         clientInUse = false;
     } else {
-        if(currentRoom.type == "ClubRoom") {
+        if(currentRoom.type == "ReviewRoom") {
+            if(currentRoom.id == -1) {
+                result = Client::GetTotdReviewJoinLink();
+            } else if(currentRoom.id == -2) {
+                result = Client::GetRoyalReviewJoinLink();
+            } else {
+                result = Client::GetReviewRoomJoinLink(currentRoom.clubId, currentRoom.id);
+            }
+        } else if (currentRoom.type == "ClubRoom") {
             if(currentRoom.isNadeo && currentRoom.hasPassword && firstLoop) { // No need to call it more than once
                 Client::GetClubRoomPassword(currentRoom.clubId, currentRoom.id);
             }
@@ -125,6 +170,10 @@ void JoinRoom(string &in mode, bool firstLoop = true) {
                     string joinLink = string(result["joinLink"]).Replace("#qjoin", "#join").Replace("#join", "#" + mode);
                     if(currentRoom.isNadeo) {
                         joinLink += "@Trackmania";
+                    }
+                    if(currentRoom.type == "ReviewRoom" && bool(result["noMap"])) {
+                        Log::Error("No map in the map pool, you cannot join the server.");
+                        return;
                     }
                     JoinServer(joinLink);
                 }

@@ -61,6 +61,9 @@ void Render() {
 				AddEvent("getAllRooms");
 			}
 			UI::EndTable();
+			UI::BeginTable("headerTable", nbColumnsHeader, UI::TableFlags::SizingStretchProp); // allows to add game specific element to the same line as pagination
+			UI::TableNextRow();
+			UI::TableNextColumn();
 			UI::BeginTable("pageTable", 6, UI::TableFlags::SizingFixedFit);
 			UI::TableNextRow();
 			UI::TableNextColumn();
@@ -98,6 +101,7 @@ void Render() {
 			}
 			UI::EndTable();
 			RenderGameSpecificHeader();
+			UI::EndTable();
 			int8 columns = 5;
 			if(displayRegion) columns++;
 			if(displayClubName) columns++;
@@ -146,7 +150,11 @@ void RenderRoom(Room room, int i) {
 		UI::Text(ColoredString(room.clubName));
 		UI::TableNextColumn();
 	}
-	UI::Text(tostring(room.playerCount) + " / " + room.GetMaxPlayers());
+	string pCount = "-";
+	if(room.playerCount > -1) {
+		pCount = tostring(room.playerCount);
+	}
+	UI::Text(pCount + " / " + room.GetMaxPlayers());
 	UI::TableNextColumn();
 	UI::Text(room.gameMode);
 	UI::TableNextColumn();
