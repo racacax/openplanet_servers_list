@@ -31,4 +31,7 @@ Room CreateArcadeRoomFromJson(Json::Value room) {
     room["currentTimeSlot"]["name"] = "Arcade - " + string(room["currentTimeSlot"]["name"]);
     return ArcadeRoom(room["currentTimeSlot"]["name"], room["playerCount"]);
 }
+Room CreateWeeklyShortsRoomFromJson(Json::Value room) {
+    return WeeklyShortsRoom(room["currentTimeSlot"]["name"], room["playerCount"]);
+}
 #endif

@@ -101,3 +101,14 @@ class ArcadeRoom: TotdRoom {
     }
 
 }
+
+class WeeklyShortsRoom: TotdRoom {
+    WeeklyShortsRoom() {}
+    WeeklyShortsRoom(const Json::Value &in name, const Json::Value &in playerCount) {
+        super(playerCount);
+        this.name = name;
+        this.type = "WeeklyShortsRoom";
+        this.id = -4;
+    }
+
+}
