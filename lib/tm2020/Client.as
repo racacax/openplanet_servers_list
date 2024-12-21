@@ -17,6 +17,11 @@ namespace Client {
     Json::Value GetArcadeRoom() {
         return Get(BASE_URL + "channel/arcade");
     }
+
+    int8 weeklyShortsRoomLoaded = 0;
+    Json::Value GetWeeklyShortsRoom() {
+        return Get(BASE_URL + "channel/weekly-shorts");
+    }
     
     int8 campaignRoomLoaded = 0;
     Json::Value GetCampaignRoom() {
@@ -61,6 +66,10 @@ namespace Client {
 
     Json::Value GetArcadeRoomJoinLink() {
         return Post(BASE_URL + "channel/arcade/join");
+    }
+
+    Json::Value GetWeeklyShortsRoomJoinLink() {
+        return Post(BASE_URL + "channel/weekly-shorts/join");
     }
     
     Json::Value GetCampaignRoomJoinLink() {

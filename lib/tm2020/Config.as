@@ -1,6 +1,8 @@
 #if TMNEXT
 [Setting category="Main" name="Display TOTD Room"]
 bool displayTotdRoom = true;
+[Setting category="Main" name="Display Weekly Shorts Room"]
+bool displayWeeklyShortsRoom = true;
 [Setting category="Main" name="Display Titlepack" hidden]
 bool displayTitlepack = false;
 [Setting category="Main" name="Last button enabled" hidden]

@@ -9,6 +9,7 @@ void GetClubRooms() {
             if(displayArcadeRoom) serversToSubstract += 1;
             if(displayCampaignRoom) serversToSubstract += 1;
             if(displayTotdRoom) serversToSubstract += 1;
+            if(displayWeeklyShortsRoom) serversToSubstract += 1;
             if(page == 0) {
                 perPage-=serversToSubstract;
             } else {
@@ -81,20 +82,36 @@ void GetArcadeRoom() {
     }
 }
 
+void GetWeeklyShortsRoom() {
+    if(Permissions::PlayArcadeChannel()) { // technically everyone ?
+        clientInUse = true;
+        auto weeklyShortsRoom = Client::GetWeeklyShortsRoom();
+        clientInUse = false;
+        if(weeklyShortsRoom.GetType() != Json::Type::Array && weeklyShortsRoom.HasKey("uid")) {
+            Client::weeklyShortsRoomLoaded = 1;
+            Room weeklyShortsRoomInstance = CreateWeeklyShortsRoomFromJson(weeklyShortsRoom);
+            servers.InsertLast(weeklyShortsRoomInstance);
+        } else {
+            Client::weeklyShortsRoomLoaded = -1;
+            Log::Error("Error while fetching Weekly Shorts room.");
+        }
+    }
+}
+
 void GetReviewRooms() {
     if(Permissions::PlayPrivateActivity()) { // only allow Club
         clientInUse = true;
         int perPage = serversPerPage;
         int offset = serversPerPage * page;
         
-        int8 serversToSubstract = 0;
+        int8 serversToSubstract = 2;
         if(searchString == "") {
             if(page == 0) {
-                perPage-=2;
+                perPage-=serversToSubstract;
                 servers.InsertLast(CreateTotdReviewRoom());
                 servers.InsertLast(CreateRoyalReviewRoom());
             } else {
-                offset-=2;
+                offset-=serversToSubstract;
             }
         } 
         auto reviewRooms = Client::GetReviewRooms(searchString, offset, perPage);
@@ -118,6 +135,7 @@ void GetAllRooms() {
     Client::totdRoomLoaded = 0;
     Client::campaignRoomLoaded = 0;
     Client::arcadeRoomLoaded = 0;
+    Client::weeklyShortsRoomLoaded = 0;
     Client::reviewRoomsLoaded = 0;
     servers = {};
     if(roomType == "club") {
@@ -125,6 +143,7 @@ void GetAllRooms() {
             if(displayTotdRoom) GetTotdRoom();
             if(displayCampaignRoom) GetCampaignRoom();
             if(displayArcadeRoom) GetArcadeRoom();
+            if(displayWeeklyShortsRoom) GetWeeklyShortsRoom();
         }
         GetClubRooms();
     } else {
@@ -159,6 +178,8 @@ void JoinRoom(string &in mode, bool firstLoop = true) {
             result = Client::GetCampaignRoomJoinLink();
         } else if(currentRoom.type == "ArcadeRoom") {
             result = Client::GetArcadeRoomJoinLink();
+        } else if(currentRoom.type == "WeeklyShortsRoom") {
+            result = Client::GetWeeklyShortsRoomJoinLink();
         }
         if(roomCopy.id == currentRoom.id) { // In case user clicked another button
             if(result.GetType() != Json::Type::Array && result.HasKey("joinLink")) {
